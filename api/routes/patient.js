@@ -4,3 +4,5 @@ const router = express.Router();
 const PatientController = require('./../controllers/patient_controller');
 
 router.post('/register', PatientController.register);
+
+module.exports=router;
