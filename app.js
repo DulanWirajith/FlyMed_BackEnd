@@ -3,12 +3,22 @@ const Response = require('./config/Response');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose=require('mongoose');
 
 const patientRoutes = require('./api/routes/patient');
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+mongoose.connect('mongodb://localhost:27017/MedigoDB',{useNewUrlParser: true} ,(err) => {
+    if (err) {
+        console.log('\x1b[31m','Medigo Db connection failed try to reconnect...');
+        createDbConnection();
+    } else {
+        console.log('\x1b[33m','Medigo Db Connection up');
+    }
+});
+mongoose.set('useCreateIndex', true);
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
