@@ -1,10 +1,21 @@
-const mongoose =require('mongoose');
+const mongoose = require('mongoose');
 
-const Patient_Schema=mongoose.Schema({
-    first_name:{type:String},
-    last_name:{type:String},
-    nic:{type:String},
-    password:{type:String}
+const Patient_Schema = mongoose.Schema({
+  first_name: {
+    type: String
+  },
+  last_name: {
+    type: String
+  },
+  nic: {
+    type: String
+  },
+  password: {
+    type: String
+  },
+  on_going_orders:{
+    type: Number
+  }
 });
 
-module.exports=mongoose.model('Patient',Patient_Schema);
+module.exports = mongoose.model('Patient', Patient_Schema);
