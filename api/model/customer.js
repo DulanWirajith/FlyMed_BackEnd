@@ -8,13 +8,16 @@ const Customer_Schema = mongoose.Schema({
     type: String
   },
   nic: {
-    type: String
+    type: String,
+    required: true,
+    unique: true
   },
   password: {
     type: String
   },
-  on_going_orders:{
-    type: Number
+  ongoing_orders: {
+    type: Number,
+    default: 0
   }
 });
 

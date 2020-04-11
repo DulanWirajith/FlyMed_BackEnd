@@ -1,9 +1,9 @@
-const Customer_Order = require('./../model/customer_order');
+const Supplier = require('./../model/supplier');
 
 
-exports.save = (cust_order) => {
+exports.save = (supplier) => {
   return new Promise((resolve, reject) => {
-    Customer_Order.create(cust_order).then(result => {
+    Supplier.create(supplier).then(result => {
       resolve(result);
     }).catch(err => {
       reject(err);
@@ -11,19 +11,19 @@ exports.save = (cust_order) => {
   });
 };
 
-exports.findAll = (query) => {
+exports.search_supplier = (query) => {
   return new Promise((resolve, reject) => {
-    Customer_Order.find(query).then((result) => {
-      resolve(result)
+    Supplier.findOne(query).then((result) => {
+      resolve(result);
     }).catch((error) => {
-      reject(error)
+      reject(error);
     });
   });
 };
 
 exports.updateOne = (query1, query2) => {
   return new Promise((resolve, reject) => {
-    Customer_Order.findOneAndUpdate(query1, query2).then((result) => {
+    Supplier.findOneAndUpdate(query1, query2).then((result) => {
       resolve(result)
     }).catch((error) => {
       reject(error)

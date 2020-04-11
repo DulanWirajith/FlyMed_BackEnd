@@ -11,7 +11,7 @@ const supplierRoutes = require('./api/routes/supplier');
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-mongoose.connect('mongodb://localhost:27017/MedigoDB',{useNewUrlParser: true} ,(err) => {
+mongoose.connect('mongodb://localhost:27017/MedicDB',{useNewUrlParser: true} ,(err) => {
     if (err) {
         console.log('\x1b[31m','Medigo Db connection failed try to reconnect...');
         createDbConnection();
