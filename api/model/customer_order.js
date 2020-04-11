@@ -112,6 +112,10 @@ const Customer_Order_Schema = mongoose.Schema({
     type: String,
     default:null
   },
+  estimation_nums_to_order: [],
+  unanswered_estimation_nums_to_order: [],
+  waiting_another_response_for_estimation: [], //estimation ekak ewith. eka decline nokara mokakhari response ekak yawala thiyenawa 
+
   // order_invoice_id: {
   //   type: String
   // },

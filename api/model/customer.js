@@ -18,6 +18,19 @@ const Customer_Schema = mongoose.Schema({
   ongoing_orders: {
     type: Number,
     default: 0
+  },
+  banned_date: {
+    type: String,
+    default: null
+  },
+  banned_time: {
+    type: String,
+    default: null
+  },
+  banned_hours: {
+    // ban karapu peya gaana
+    type: Number,
+    default: 0
   }
 });
 

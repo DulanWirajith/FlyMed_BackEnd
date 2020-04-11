@@ -30,3 +30,13 @@ exports.updateOne = (query1, query2) => {
     });
   });
 };
+
+exports.findOne = (query) => {
+  return new Promise((resolve, reject) => {
+    Customer_Order.findOne(query).then((result) => {
+      resolve(result);
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+};
