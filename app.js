@@ -5,7 +5,8 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose=require('mongoose');
 
-const patientRoutes = require('./api/routes/patient');
+const customerRoutes = require('./api/routes/customer');
+const supplierRoutes = require('./api/routes/supplier');
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -31,7 +32,8 @@ app.use((req, res, next) => {
     next();
 })
 
-app.use('/api/patient', patientRoutes);
+app.use('/api/customer', customerRoutes);
+app.use('/api/supplier', supplierRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('not found');
