@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const encryption = require('./../../auth/encryption');
+// auth/encryption.js
 
 const Customer_Order_Schema = mongoose.Schema({
   customer_id: {
@@ -57,18 +59,12 @@ const Customer_Order_Schema = mongoose.Schema({
     type: String,
     required: true
   },
-  selected_supplier_ids: {
-    type: String,
-    required: true
-  },
+  selected_supplier_ids: [],
   no_of_medications: {
-    type: String,
+    type: Number,
     required: true
   },
-  medication_summary: {
-    type: String,
-    required: true
-  },
+  medication_summary: [],
   order_status: {
     type: String,
     default: 'pending',
@@ -91,30 +87,84 @@ const Customer_Order_Schema = mongoose.Schema({
   },
   order_id_by_us: {
     type: String,
-    required: true
+    default:null
   },
 
-// After Model create
+  // After Model create
 
   confirmed_estimation_id: {
-    type: String
+    type: String,
+    default:null
   },
   order_confirmed_supplier_id: {
-    type: String
+    type: String,
+    default:null
   },
   my_track_id: {
-    type: String
+    type: String,
+    default:null
   },
   changed_track_id: {
-    type: String
+    type: String,
+    default:null
   },
   reason_for_cancel: {
-    type: String
+    type: String,
+    default:null
   },
   // order_invoice_id: {
   //   type: String
   // },
 
 });
+
+
+
+
+Customer_Order_Schema.pre('save', function(next) {
+  // console.log("pre is running");
+  var cust_order = this;
+  if (!cust_order.isModified('prescription_url')) {
+    return next();
+  }
+  encryption.encrypt(this.prescription_url).then((encrypted_prescription_url) => {
+    this.prescription_url = encrypted_prescription_url;
+    next();
+  }).catch(error => {
+    throw new Error(error);
+    next();
+  });
+});
+
+Customer_Order_Schema.pre('save', function(next) {
+  // console.log("pre is running");
+  var cust_order = this;
+  if (!cust_order.isModified('patient_nic_num')) {
+    return next();
+  }
+  encryption.encrypt(this.patient_nic_num).then((encrypted_patient_nic_num) => {
+    this.patient_nic_num = encrypted_patient_nic_num;
+    next();
+  }).catch(error => {
+    throw new Error(error);
+    next();
+  });
+});
+
+Customer_Order_Schema.pre('save', function(next) {
+  // console.log("pre is running");
+  var cust_order = this;
+  if (!cust_order.isModified('patient_nic_url')) {
+    return next();
+  }
+  encryption.encrypt(this.patient_nic_url).then((encrypted_patient_nic_url) => {
+    this.patient_nic_url = encrypted_patient_nic_url;
+    next();
+  }).catch(error => {
+    throw new Error(error);
+    next();
+  });
+});
+
 
 module.exports = mongoose.model('Customer_Order', Customer_Order_Schema);
