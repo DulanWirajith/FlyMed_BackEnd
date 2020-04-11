@@ -1,9 +1,9 @@
-const Patient = require('./../model/patient');
+const Customer = require('./../model/customer');
 
 
-exports.save = (patient) => {
+exports.save = (customer) => {
   return new Promise((resolve, reject) => {
-    Patient.create(patient).then(result => {
+    Customer.create(patient).then(result => {
       resolve(result);
     }).catch(err => {
       reject(err);

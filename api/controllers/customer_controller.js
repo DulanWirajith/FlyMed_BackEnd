@@ -1,4 +1,4 @@
-const Patient = require('./../db/patient');
+const Patient = require('./../db/customer');
 const Response = require('./../../config/Response');
 
 exports.register = (req, res, next) => {
@@ -8,3 +8,7 @@ exports.register = (req, res, next) => {
     Response.create(res, 500, 'server error', err);
   })
 };
+
+exports.addOrder=(req, res, next) => {
+
+}
