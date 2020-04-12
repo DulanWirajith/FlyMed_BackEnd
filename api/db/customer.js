@@ -20,3 +20,13 @@ exports.search_customer = (query) => {
     });
   });
 };
+
+exports.updateOne = (query1, query2) => {
+  return new Promise((resolve, reject) => {
+    Customer.findOneAndUpdate(query1, query2).then((result) => {
+      resolve(result)
+    }).catch((error) => {
+      reject(error)
+    });
+  });
+};
