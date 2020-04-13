@@ -16,7 +16,7 @@ mongoose.connect('mongodb://localhost:27017/MedicDB',{useNewUrlParser: true} ,(e
         console.log('\x1b[31m','Medigo Db connection failed try to reconnect...');
         createDbConnection();
     } else {
-        console.log('\x1b[33m','Medigo Db Connection up');
+        console.log('\x1b[33m','Medic Db Connection up');
     }
 });
 mongoose.set('useCreateIndex', true);
