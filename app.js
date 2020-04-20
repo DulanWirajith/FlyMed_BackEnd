@@ -3,20 +3,44 @@ const Response = require('./config/Response');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
+const socket_io = require('socket.io');
+const io = socket_io();
+const socket_connection = require('./auth/socketprotection');
+
+// io.use((socket, next) => {
+//     console.log(socket.handshake.query);
+//     if (socket.handshake.query && socket.handshake.query.token) {
+//         let token = socket.handshake.query.token;
+//         if (socket_connection.isValid(token)) {
+//             console.log('auth pass')
+//             next();
+//         }
+//         console.log('auth failed 2')
+//         next(new Error('authentication error'));
+//     } else {
+//         console.log('auth failed 1');
+//         next(new Error('authentication error'));
+//     }
+// });
+
+app.io = io;
 
 const customerRoutes = require('./api/routes/customer');
 const supplierRoutes = require('./api/routes/supplier');
 
+const Chat = require('./api/service/ChatService')(io);
+Chat.createConnection();
+
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-mongoose.connect('mongodb://localhost:27017/MedicDB',{useNewUrlParser: true} ,(err) => {
+mongoose.connect('mongodb://localhost:27017/MedicDB', { useNewUrlParser: true }, (err) => {
     if (err) {
-        console.log('\x1b[31m','Medigo Db connection failed try to reconnect...');
+        console.log('\x1b[31m', 'Medigo Db connection failed try to reconnect...');
         createDbConnection();
     } else {
-        console.log('\x1b[33m','Medic Db Connection up');
+        console.log('\x1b[33m', 'Medic Db Connection up');
     }
 });
 mongoose.set('useCreateIndex', true);
@@ -50,8 +74,17 @@ app.use((error, req, res, next) => {
     });
 })
 
+
+
 app.use((req, res, next) => {
     Response.create(res, 200, 'working', null);
 });
+
+// io.origins((origin, callback) => {
+//     if (origin !== 'https://3d0b8f3d.ngrok.io') {
+//         return callback('origin not allowed', false);
+//     }
+//     callback(null, true);
+// });
 
 module.exports = app;
