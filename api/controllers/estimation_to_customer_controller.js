@@ -1,6 +1,6 @@
-const CustomerOrder = require('./../db/customer_order');
+const PharmacyOrder = require('./../db/pharmacy_order');
 const Customer = require('./../db/customer');
-const Supplier = require('./../db/supplier');
+const Pharmacy = require('./../db/pharmacy');
 const EstimationToCustomer = require('./../db/estimation_to_customer');
 const TrackMyID = require('./../db/track_my_id');
 
@@ -18,15 +18,17 @@ exports.sendEstimation = (req, res, next) => {
         console.log("estimation added");
         var estimation_id = myestimation1._id;
         var order_id = myestimation1.order_id;
-        CustomerOrder.findOne({
+        PharmacyOrder.findOne({
           order_id_by_us: order_id
-        }).then(customerOrder1 => {
-          // console.log(customerOrder1);
-          var estimation_nums_to_order = customerOrder1.estimation_nums_to_order;
-          var unanswered_estimation_nums_to_order = customerOrder1.unanswered_estimation_nums_to_order;
+        }).then(pharmacyorder => {
+          console.log("pharmacy order ");
+          console.log(pharmacyorder);
+          var estimation_nums_to_order = pharmacyorder.estimation_nums_to_order;
+          var unanswered_estimation_nums_to_order = pharmacyorder.unanswered_estimation_nums_to_order;
           estimation_nums_to_order.push(estimation_id);
+          console.log(estimation_nums_to_order);
           unanswered_estimation_nums_to_order.push(estimation_id);
-          CustomerOrder.updateOne({
+          PharmacyOrder.updateOne({
             order_id_by_us: order_id
           }, {
             $set: {
@@ -35,7 +37,8 @@ exports.sendEstimation = (req, res, next) => {
             }
           }).then(updatedOrder1 => {
             console.log("estimation send to order");
-            Supplier.search_supplier({
+            console.log(updatedOrder1);
+            Pharmacy.search_supplier({
               _id: req.body.supplier_id
             }).then(supplier => {
               var normal_order_queue = supplier.normal_order_queue;
@@ -45,7 +48,7 @@ exports.sendEstimation = (req, res, next) => {
               if (index > -1) {
                 normal_order_queue.splice(index, 1);
               }
-              Supplier.updateOne({
+              Pharmacy.updateOne({
                 _id: req.body.supplier_id
               }, {
                 $set: {
@@ -117,7 +120,7 @@ exports.finalBilling = (req, res, next) => {
     }).then(track_my_id => {
       console.log(track_my_id);
       console.log(track_my_id.order_id);
-      CustomerOrder.findOne({
+      PharmacyOrder.findOne({
         order_id_by_us: track_my_id.order_id
       }).then(custOrder => {
         Customer.search_customer({

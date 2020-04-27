@@ -35,12 +35,12 @@ Chat.createConnection();
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-mongoose.connect('mongodb://localhost:27017/MedicDB', { useNewUrlParser: true }, (err) => {
+mongoose.connect('mongodb://localhost:27017/BuDDyDB', { useNewUrlParser: true }, (err) => {
     if (err) {
-        console.log('\x1b[31m', 'Medigo Db connection failed try to reconnect...');
+        console.log('\x1b[31m', 'BuDDy Db connection failed try to reconnect...');
         createDbConnection();
     } else {
-        console.log('\x1b[33m', 'Medic Db Connection up');
+        console.log('\x1b[33m', 'BuDDy Db Connection up');
     }
 });
 mongoose.set('useCreateIndex', true);
