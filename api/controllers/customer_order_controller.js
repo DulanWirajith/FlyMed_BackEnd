@@ -1,6 +1,6 @@
-const CustomerOrder = require('./../db/customer_order');
+const PharmacyOrder = require('./../db/pharmacy_order');
 const Customer = require('./../db/customer');
-const Supplier = require('./../db/supplier');
+const Pharmacy = require('./../db/pharmacy');
 const EstimationToCustomer = require('./../db/estimation_to_customer');
 const TrackMyID = require('./../db/track_my_id');
 
@@ -40,7 +40,7 @@ exports.checkBanned = (req, res, next) => {
 }
 
 
-exports.addOrder = (req, res, next) => {
+exports.addPharmacyOrder = (req, res, next) => {
   // console.log(req.body.customer_id);
   var order_id_by_us;
   Customer.search_customer({
@@ -48,24 +48,23 @@ exports.addOrder = (req, res, next) => {
   }).then(searchedCustomer => {
     if (searchedCustomer.ongoing_orders < 6) {
       // set our order id
-      CustomerOrder.findAll().then(all_orders => {
+      PharmacyOrder.findAll().then(all_orders => {
         var all_orders_length = all_orders.length;
-        order_id_by_us = "tasiri" + all_orders_length;
+        order_id_by_us = "PHAR" + all_orders_length;
         console.log(order_id_by_us);
 
         // send to supplier normal_order_queue and save data to database
         var selected_suppliers = req.body.selected_supplier_ids;
-        if (selected_suppliers.length < 11) {
+        if (selected_suppliers.length < 5) {
           // add to supplier normal_order_queue
           for (var i = 0; i < selected_suppliers.length; i++) {
-            Supplier.search_supplier({
+            Pharmacy.search_supplier({
               _id: selected_suppliers[i]
             }).then(selected_supplier => {
               var normal_order_queue = selected_supplier.normal_order_queue;
               normal_order_queue.push(order_id_by_us);
               console.log(normal_order_queue);
-
-              Supplier.updateOne({
+              Pharmacy.updateOne({
                 _id: selected_supplier._id
               }, {
                 $set: {
@@ -88,8 +87,8 @@ exports.addOrder = (req, res, next) => {
 
           }
 
-          CustomerOrder.save(req.body).then(my_order => {
-            CustomerOrder.updateOne({
+          PharmacyOrder.save(req.body).then(my_order => {
+            PharmacyOrder.updateOne({
               _id: my_order._id
             }, {
               $set: {
@@ -134,9 +133,11 @@ exports.addOrder = (req, res, next) => {
   })
 
 }
-exports.goingToCancelOrder = (req, res, next) => {
 
-  CustomerOrder.findOne({
+
+exports.goingToCancelPharmacyOrder = (req, res, next) => {
+
+  PharmacyOrder.findOne({
     _id: req.body.order_id
   }).then(searched_order => {
     if (searched_order.unanswered_estimation_nums_to_order.length < 1) {
@@ -202,9 +203,9 @@ exports.goingToCancelOrder = (req, res, next) => {
   });
 }
 
-exports.cancelOrder = (req, res, next) => {
+exports.cancelPharmacyOrder = (req, res, next) => {
   console.log(req.body);
-  CustomerOrder.findOne({
+  PharmacyOrder.findOne({
     _id: req.body.order_id
   }).then(searched_order => {
     if (searched_order.unanswered_estimation_nums_to_order.length < 1) {
@@ -218,7 +219,7 @@ exports.cancelOrder = (req, res, next) => {
               message: 'cant send order cancelleration request. You already request order cancelleration.'
             });
           } else {
-            Supplier.search_supplier({
+            Pharmacy.search_supplier({
               _id: searched_order.order_confirmed_supplier_id
             }).then(order_confirmed_supplier => {
               console.log(order_confirmed_supplier);
@@ -231,14 +232,14 @@ exports.cancelOrder = (req, res, next) => {
                 date: req.body.date,
                 time: req.body.time
               });
-              Supplier.updateOne({
+              Pharmacy.updateOne({
                 _id: order_confirmed_supplier._id
               }, {
                 $set: {
                   confirmed_order_cancelling_requests_by_customer_queue: confirmed_order_cancelling_requests_by_customer_queue
                 }
               }).then(updated_supplier => {
-                CustomerOrder.updateOne({
+                PharmacyOrder.updateOne({
                   _id: searched_order._id
                 }, {
                   $set: {
@@ -272,7 +273,7 @@ exports.cancelOrder = (req, res, next) => {
 
         } else {
           // unconfirmed order ekak
-          CustomerOrder.findOne({
+          PharmacyOrder.findOne({
             _id: req.body.order_id
           }).then(myorder => {
             if (myorder.order_status == 'pending') {
@@ -287,7 +288,7 @@ exports.cancelOrder = (req, res, next) => {
                 console.log('24h pahu wela');
                 for (var i = 0; i < searched_order.selected_supplier_ids.length; i++) {
                   // console.log(searched_order.selected_supplier_ids[i]);
-                  Supplier.search_supplier({
+                  Pharmacy.search_supplier({
                     _id: searched_order.selected_supplier_ids[i]
                   }).then(searched_supplier => {
                     // console.log(searched_supplier.normal_order_queue);
@@ -303,7 +304,7 @@ exports.cancelOrder = (req, res, next) => {
                     }
 
                     // console.log(normal_order_queue);
-                    Supplier.updateOne({
+                    Pharmacy.updateOne({
                       _id: searched_supplier._id
                     }, {
                       $set: {
@@ -327,7 +328,7 @@ exports.cancelOrder = (req, res, next) => {
                   });
                 }
 
-                CustomerOrder.updateOne({
+                PharmacyOrder.updateOne({
                   _id: req.body.order_id
                 }, {
                   $set: {
@@ -355,7 +356,7 @@ exports.cancelOrder = (req, res, next) => {
                   console.log('60%ta wedi');
                   for (var i = 0; i < searched_order.selected_supplier_ids.length; i++) {
                     // console.log(searched_order.selected_supplier_ids[i]);
-                    Supplier.search_supplier({
+                    Pharmacy.search_supplier({
                       _id: searched_order.selected_supplier_ids[i]
                     }).then(searched_supplier => {
                       // console.log(searched_supplier.normal_order_queue);
@@ -370,7 +371,7 @@ exports.cancelOrder = (req, res, next) => {
                       }
 
                       // console.log(normal_order_queue);
-                      Supplier.updateOne({
+                      Pharmacy.updateOne({
                         _id: searched_supplier._id
                       }, {
                         $set: {
@@ -394,7 +395,7 @@ exports.cancelOrder = (req, res, next) => {
                     });
                   }
 
-                  CustomerOrder.updateOne({
+                  PharmacyOrder.updateOne({
                     _id: req.body.order_id
                   }, {
                     $set: {
@@ -415,7 +416,7 @@ exports.cancelOrder = (req, res, next) => {
                   console.log('60%ta adui');
                   for (var i = 0; i < searched_order.selected_supplier_ids.length; i++) {
                     // console.log(searched_order.selected_supplier_ids[i]);
-                    Supplier.search_supplier({
+                    Pharmacy.search_supplier({
                       _id: searched_order.selected_supplier_ids[i]
                     }).then(searched_supplier => {
                       // console.log(searched_supplier.normal_order_queue);
@@ -429,7 +430,7 @@ exports.cancelOrder = (req, res, next) => {
                         normal_order_queue.splice(index, 1);
                       }
                       // console.log(normal_order_queue);
-                      Supplier.updateOne({
+                      Pharmacy.updateOne({
                         _id: searched_supplier._id
                       }, {
                         $set: {
@@ -453,7 +454,7 @@ exports.cancelOrder = (req, res, next) => {
                     });
                   }
 
-                  CustomerOrder.updateOne({
+                  PharmacyOrder.updateOne({
                     _id: req.body.order_id
                   }, {
                     $set: {
@@ -462,7 +463,7 @@ exports.cancelOrder = (req, res, next) => {
                     }
                   }).then(updated_order => {
                     // ban for 2 hours
-                    CustomerOrder.findOne({
+                    PharmacyOrder.findOne({
                       _id: req.body.order_id
                     }).then(order => {
                       var customer_id = order.customer_id;
@@ -586,7 +587,7 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
 
     //make track_id and track_id table eke edit karana weda tika
 
-    var track_id = "BD-tasiri27";
+    var track_id = "Zee-PHAR0";
 
     TrackMyID.save({
       track_id: track_id,
@@ -602,7 +603,7 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
     }).catch();
 
     // update customer order
-    CustomerOrder.updateOne({
+    PharmacyOrder.updateOne({
       order_id_by_us: myestimation1.order_id
     }, {
       $set: {
@@ -633,13 +634,13 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
 
     //anith suppliers lage normal_order_queue eken ain wenawa
     // var estimation_sold_out_reason = "order sold out by full estimate amount Rs." + myestimation1.total_net_amount;
-    CustomerOrder.findOne({
+    PharmacyOrder.findOne({
       order_id_by_us: myestimation1.order_id
     }).then(cust_order => {
       var selected_supplier_ids = cust_order.selected_supplier_ids;
       console.log(selected_supplier_ids);
       for (var i = 0; i < selected_supplier_ids.length; i++) {
-        Supplier.search_supplier({
+        Pharmacy.search_supplier({
           _id: selected_supplier_ids[i]
         }).then(selected_supplier => {
           console.log(selected_supplier.normal_order_queue);
@@ -649,7 +650,7 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
           if (index > -1) {
             normal_order_queue.splice(index, 1);
           }
-          Supplier.updateOne({
+          Pharmacy.updateOne({
             _id: selected_supplier._id
           }, {
             $set: {
@@ -665,7 +666,7 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
 
     // order ekata apu unanswered_estimation_nums_to_order wala estimation_status eka decline wenawa.
     console.log("heyyyqwe" + myestimation1.order_id);
-    CustomerOrder.findOne({
+    PharmacyOrder.findOne({
       order_id_by_us: myestimation1.order_id
     }).then(myorder => {
       var unanswered_estimation_nums_to_order = myorder.unanswered_estimation_nums_to_order;
@@ -691,7 +692,7 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
         }
       }
 
-      CustomerOrder.updateOne({
+      PharmacyOrder.updateOne({
         order_id_by_us: myestimation1.order_id
       }, {
         $set: {
@@ -704,7 +705,7 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
 
 
     // order eke estimation_nums_to_order walata sold out report yanawa.(confirm una estimation ekata hera)
-    CustomerOrder.findOne({
+    PharmacyOrder.findOne({
       order_id_by_us: myestimation1.order_id
     }).then(myorder => {
       var estimation_nums_to_order = myorder.estimation_nums_to_order;
@@ -744,12 +745,12 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
 
 
     // supplierge confirmed_order_queue ekata wetenawa
-    CustomerOrder.findOne({
+    PharmacyOrder.findOne({
       order_id_by_us: myestimation1.order_id
     }).then(myorder => {
       console.log("myorder.order_confirmed_supplier " + myorder.order_confirmed_supplier_id);
       // var order_confirmed_supplier_id = ;
-      Supplier.search_supplier({
+      Pharmacy.search_supplier({
         _id: myorder.order_confirmed_supplier_id
       }).then(order_confirmed_supp => {
 
@@ -762,7 +763,7 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
         });
         console.log(confirmed_order_queue);
 
-        Supplier.updateOne({
+        Pharmacy.updateOne({
           _id: myorder.order_confirmed_supplier_id
         }, {
           $set: {
@@ -770,6 +771,9 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
           }
         }).then(updated_supp => {
           console.log("confirmed_order_queue updated");
+          res.status(200).json({
+            message: 'ESTIMATION ACCEPTED'
+          });
         }).catch();
       }).catch(error => {
         console.log(error);

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const encryption = require('./../../auth/encryption');
 // auth/encryption.js
 
-const Customer_Order_Schema = mongoose.Schema({
+const Pharmacy_Order_Schema = mongoose.Schema({
   customer_id: {
     type: String,
     required: true
@@ -23,19 +23,19 @@ const Customer_Order_Schema = mongoose.Schema({
     type: String,
     required: true
   },
-  deliver_to_my_address: {
-    type: Boolean,
-    default: true,
-    required: true
-  },
-  delivery_address: {
-    type: String,
-    required: true
-  },
-  delivery_postal_code: {
-    type: Number,
-    required: true
-  },
+  // deliver_to_my_address: {
+  //   type: Boolean,
+  //   default: true,
+  //   required: true
+  // },
+  // delivery_address: {
+  //   type: String,
+  //   required: true
+  // },
+  // delivery_postal_code: {
+  //   type: Number,
+  //   required: true
+  // },
   secondary_contact_num: {
     type: String
   },
@@ -47,18 +47,18 @@ const Customer_Order_Schema = mongoose.Schema({
     type: String,
     required: true
   },
-  get_medicine_from_spc: {
-    type: Boolean,
-    default: false,
-    required: true
-  },
+  // get_medicine_from_spc: {
+  //   type: Boolean,
+  //   default: false,
+  //   required: true
+  // },
   patient_nic_url: {
     type: String
   },
-  searching_postal_codes: {
-    type: String,
-    required: true
-  },
+  // searching_postal_codes: {
+  //   type: String,
+  //   required: true
+  // },
   selected_supplier_ids: [],
   no_of_medications: {
     type: Number,
@@ -80,11 +80,11 @@ const Customer_Order_Schema = mongoose.Schema({
     default: 0,
     required: true
   },
-  is_senior_citizen: {
-    type: Boolean,
-    default: false,
-    required: true
-  },
+  // is_senior_citizen: {
+  //   type: Boolean,
+  //   default: false,
+  //   required: true
+  // },
   order_id_by_us: {
     type: String,
     default:null
@@ -104,10 +104,10 @@ const Customer_Order_Schema = mongoose.Schema({
     type: String,
     default:null
   },
-  changed_track_id: {
-    type: String,
-    default:null
-  },
+  // changed_track_id: {
+  //   type: String,
+  //   default:null
+  // },
   reason_for_cancel: {
     type: String,
     default:null
@@ -128,7 +128,7 @@ const Customer_Order_Schema = mongoose.Schema({
 
 
 
-Customer_Order_Schema.pre('save', function(next) {
+Pharmacy_Order_Schema.pre('save', function(next) {
   // console.log("pre is running");
   var cust_order = this;
   if (!cust_order.isModified('prescription_url')) {
@@ -143,7 +143,7 @@ Customer_Order_Schema.pre('save', function(next) {
   });
 });
 
-Customer_Order_Schema.pre('save', function(next) {
+Pharmacy_Order_Schema.pre('save', function(next) {
   // console.log("pre is running");
   var cust_order = this;
   if (!cust_order.isModified('patient_nic_num')) {
@@ -158,7 +158,7 @@ Customer_Order_Schema.pre('save', function(next) {
   });
 });
 
-Customer_Order_Schema.pre('save', function(next) {
+Pharmacy_Order_Schema.pre('save', function(next) {
   // console.log("pre is running");
   var cust_order = this;
   if (!cust_order.isModified('patient_nic_url')) {
@@ -174,4 +174,4 @@ Customer_Order_Schema.pre('save', function(next) {
 });
 
 
-module.exports = mongoose.model('Customer_Order', Customer_Order_Schema);
+module.exports = mongoose.model('Pharmacy_Order', Pharmacy_Order_Schema);

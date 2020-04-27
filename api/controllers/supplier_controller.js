@@ -1,8 +1,8 @@
-const Supplier = require('./../db/supplier');
+const Pharmacy = require('./../db/pharmacy');
 const Response = require('./../../config/Response');
 
 exports.register = (req, res, next) => {
-  Supplier.save(req.body).then(savedSupplier => {
+  Pharmacy.save(req.body).then(savedSupplier => {
     Response.create(res, 200, 'saved', savedSupplier);
   }).catch(err => {
     console.log(err);

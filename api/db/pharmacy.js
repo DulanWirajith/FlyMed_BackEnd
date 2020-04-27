@@ -1,9 +1,9 @@
-const Supplier = require('./../model/supplier');
+const Pharmacy = require('./../model/pharmacy');
 
 
 exports.save = (supplier) => {
   return new Promise((resolve, reject) => {
-    Supplier.create(supplier).then(result => {
+    Pharmacy.create(supplier).then(result => {
       resolve(result);
     }).catch(err => {
       reject(err);
@@ -13,7 +13,7 @@ exports.save = (supplier) => {
 
 exports.search_supplier = (query) => {
   return new Promise((resolve, reject) => {
-    Supplier.findOne(query).then((result) => {
+    Pharmacy.findOne(query).then((result) => {
       resolve(result);
     }).catch((error) => {
       reject(error);
@@ -23,7 +23,7 @@ exports.search_supplier = (query) => {
 
 exports.updateOne = (query1, query2) => {
   return new Promise((resolve, reject) => {
-    Supplier.findOneAndUpdate(query1, query2).then((result) => {
+    Pharmacy.findOneAndUpdate(query1, query2).then((result) => {
       resolve(result)
     }).catch((error) => {
       reject(error)

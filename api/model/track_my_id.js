@@ -34,12 +34,12 @@ const Track_My_ID_Schema = mongoose.Schema({
   },
 
 
-  // Waiting for pickup by PO Name
+  // Waiting for pickup by deliveryBoy Name
   ready_for_pickup_supplier_id: {
     type: String,
     default: null
   },
-  ready_for_pickup_po_id: {
+  ready_for_pickup_delivery_boy_id: {
     type: String,
     default: null
   },
@@ -53,93 +53,125 @@ const Track_My_ID_Schema = mongoose.Schema({
   },
 
 
-  //processing at PO Name
-  received_from_supplier_to_po_date: {
-    type: String,
-    default: null
-  },
-  received_from_supplier_to_po_time: {
-    type: String,
-    default: null
-  },
-  picked_list_id: {
-    type: String,
-    default: null
-  },
+  //
+  // // Waiting for pickup by PO Name
+  // ready_for_pickup_supplier_id: {
+  //   type: String,
+  //   default: null
+  // },
+  // ready_for_pickup_po_id: {
+  //   type: String,
+  //   default: null
+  // },
+  // ready_for_pickup_date: {
+  //   type: String,
+  //   default: null
+  // },
+  // ready_for_pickup_time: {
+  //   type: String,
+  //   default: null
+  // },
 
-
-  // In transmit to PO Name
-  inter_po_transmit_queue: [{
-    inter_po_dispatch_list_id: String,
-    inter_po_transmit_date: String,
-    inter_po_transmit_time: String,
-    inter_po_transmit_first_po_id: String,
-    inter_po_transmit_second_po_id: String,
-    inter_po_transmit_incharge_officer_name: String,
-    inter_po_transmit_incharge_officer_telephone: Number,
-    inter_po_transmit_reason: String,
-  }],
-
-
-  //processing at PO Name
-  received_from_po_to_po: [{
-    received_from_po_to_po_date: String,
-    received_from_po_to_po_time: String,
-  }],
-
-
-  // 2020/04/16 after 2pm arriving at your location
-  final_delivery: [{
-    final_delivery_dipatch_list_id: String,
-    sheduled_dispatch_date_from_po: String,
-    sheduled_dispatch_time_from_po: String,
-  }],
-
+  //
+  // //processing at PO Name
+  // received_from_supplier_to_po_date: {
+  //   type: String,
+  //   default: null
+  // },
+  // received_from_supplier_to_po_time: {
+  //   type: String,
+  //   default: null
+  // },
+  // picked_list_id: {
+  //   type: String,
+  //   default: null
+  // },
+  //
+  //
+  // // In transmit to PO Name
+  // inter_po_transmit_queue: [{
+  //   inter_po_dispatch_list_id: String,
+  //   inter_po_transmit_date: String,
+  //   inter_po_transmit_time: String,
+  //   inter_po_transmit_first_po_id: String,
+  //   inter_po_transmit_second_po_id: String,
+  //   inter_po_transmit_incharge_officer_name: String,
+  //   inter_po_transmit_incharge_officer_telephone: Number,
+  //   inter_po_transmit_reason: String,
+  // }],
+  //
+  //
+  // //processing at PO Name
+  // received_from_po_to_po: [{
+  //   received_from_po_to_po_date: String,
+  //   received_from_po_to_po_time: String,
+  // }],
+  //
+  //
+  // // 2020/04/16 after 2pm arriving at your location
+  // final_delivery: [{
+  //   final_delivery_dipatch_list_id: String,
+  //   sheduled_dispatch_date_from_po: String,
+  //   sheduled_dispatch_time_from_po: String,
+  // }],
+  //
 
   // delivery completed / delivery attempt failed
-  delivery_feedback: [{
-    delivery_feedback_added_date: String,
-    delivery_feedback_added_time: String,
-    delivery_feedback: String,
-    delivery_incompleted_reason: String,
-    cost_from_customer: String,
-  }],
+  // delivery_feedback: [{
+  delivery_feedback_added_date: {
+    type: String,
+    default: null
+  },
+  delivery_feedback_added_time: {
+    type: String,
+    default: null
+  },
+  delivery_feedback: {
+    type: String,
+    default: null
+  },
+  delivery_incompleted_reason: {
+    type: String,
+    default: null
+  },
+  cost_from_customer: {
+    type: Number,
+    default: null
+  },
+  // }],
 
-
+  //
   // Conflict found in your delivery address
-  new_track_id: [{
-    new_track_id: String,
-    new_track_id_added_date: String,
-    new_track_id_added_time: String,
-    new_track_id_added_officer: String,
+  disputes_added_by_system: [{
+    dispute_track_id: String,
   }],
 
 
   // returning to supplier
-    returned_to_supplier_added_date: {
-      type: String,
-      default: null
-    },
-    returned_to_supplier_added_time: {
-      type: String,
-      default: null
-    },
-    returned_to_supplier_added_po: {
-      type: String,
-      default: null
-    },
+  returned_to_supplier_added_date: {
+    type: String,
+    default: null
+  },
+  returned_to_supplier_added_time: {
+    type: String,
+    default: null
+  },
+  returned_to_supplier_added_delivery_boy: {
+    type: String,
+    default: null
+  },
 
 
   // order cancelled
-  order_cancelled_by_customer_date: {
+  order_cancelled_by_supplier_date: {
     type: String,
     default: null
   },
-  order_cancelled_by_customer_time: {
+  order_cancelled_by_supplier_time: {
     type: String,
     default: null
   },
-  order_cancelled_by_customer_reason: {
+  order_cancelled_by_supplier_reason: {
     type: String,
     default: null
   },
