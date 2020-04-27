@@ -49,9 +49,11 @@ const Estimation_To_Customer_Schema = mongoose.Schema({
   available_items: [{
     item:String,
     wanted_days:Number,
+    wanted_dose:String,
+    wanted_brand:String,
     duration_i_can_supply:Number,
-    dose:String,
-    brand_name:String,
+    dose_i_can_supply:String,
+    brand_i_can_supply:String,
     price:Number
   }],
   cancelled_items:[{
@@ -73,8 +75,17 @@ const Estimation_To_Customer_Schema = mongoose.Schema({
   invoice_time: {
     type: String,
     default:null
+  },
+  need_new_estimation: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
+  order_confirmed_with_customer_request: {
+    type: Boolean,
+    required: true,
+    default: false
   }
-
 
 });
 

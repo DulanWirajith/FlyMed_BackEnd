@@ -1,7 +1,8 @@
 const CustomerOrder = require('./../db/customer_order');
 const Customer = require('./../db/customer');
 const Supplier = require('./../db/supplier');
-const EstimationToCustomerController = require('./../db/estimation_to_customer');
+const EstimationToCustomer = require('./../db/estimation_to_customer');
+const TrackMyID = require('./../db/track_my_id');
 
 
 const Response = require('./../../config/Response');
@@ -577,13 +578,28 @@ exports.cancelOrder = (req, res, next) => {
 
 exports.acceptAndConfirmEstimation = (req, res, next) => {
 
-  EstimationToCustomerController.findOne({
+  EstimationToCustomer.findOne({
     _id: req.body.estimation_id
   }).then(myestimation1 => {
     // if (myestimation1.estimation_for_full_requirement = true) {
     //full requirement
 
-    //make track_id
+    //make track_id and track_id table eke edit karana weda tika
+
+    var track_id = "BD-tasiri27";
+
+    TrackMyID.save({
+      track_id: track_id,
+      order_id: myestimation1.order_id,
+      estimation_id: req.body.estimation_id,
+      track_id_status: "Processing at Supplier",
+      created_date: req.body.date,
+      created_time: req.body.time,
+      supplier_id: myestimation1.supplier_id
+
+    }).then(my_track_id => {
+      console.log(my_track_id);
+    }).catch();
 
     // update customer order
     CustomerOrder.updateOne({
@@ -593,7 +609,7 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
         confirmed_estimation_id: myestimation1._id,
         order_confirmed_supplier_id: myestimation1.supplier_id,
         order_status: "accepted",
-        my_track_id: "GL#ZEE#001",
+        my_track_id: track_id,
       }
     }).then(updated_order => {
       console.log("order updated");
@@ -602,7 +618,7 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
 
     });
     //update estimation order_status
-    EstimationToCustomerController.updateOne({
+    EstimationToCustomer.updateOne({
       _id: myestimation1._id
     }, {
       $set: {
@@ -660,7 +676,7 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
         } else {
           console.log(myestimation1._id != unanswered_estimation_nums_to_order[i]);
           // estimation_status decline karanna
-          EstimationToCustomerController.updateOne({
+          EstimationToCustomer.updateOne({
             _id: unanswered_estimation_nums_to_order[i]
           }, {
             $set: {
@@ -710,7 +726,7 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
           }
 
           // console.log(estimation_sold_out_reason);
-          EstimationToCustomerController.updateOne({
+          EstimationToCustomer.updateOne({
             _id: estimation_nums_to_order[i]
           }, {
             $set: {
@@ -731,15 +747,19 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
     CustomerOrder.findOne({
       order_id_by_us: myestimation1.order_id
     }).then(myorder => {
-      console.log("myorder.order_confirmed_supplier "+myorder.order_confirmed_supplier_id);
+      console.log("myorder.order_confirmed_supplier " + myorder.order_confirmed_supplier_id);
       // var order_confirmed_supplier_id = ;
       Supplier.search_supplier({
         _id: myorder.order_confirmed_supplier_id
       }).then(order_confirmed_supp => {
 
         var confirmed_order_queue = order_confirmed_supp.confirmed_order_queue;
-          console.log(confirmed_order_queue);
-        confirmed_order_queue.push(myestimation1.order_id);
+        console.log(confirmed_order_queue);
+        confirmed_order_queue.push({
+          order_id: myestimation1.order_id,
+          status: "incompleted",
+          estimation_id: myestimation1._id
+        });
         console.log(confirmed_order_queue);
 
         Supplier.updateOne({
@@ -748,10 +768,10 @@ exports.acceptAndConfirmEstimation = (req, res, next) => {
           $set: {
             confirmed_order_queue: confirmed_order_queue
           }
-        }).then(updated_supp=>{
+        }).then(updated_supp => {
           console.log("confirmed_order_queue updated");
         }).catch();
-      }).catch(error=>{
+      }).catch(error => {
         console.log(error);
       });
     }).catch();

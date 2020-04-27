@@ -9,8 +9,6 @@ router.post('/cancel_order_by_supplier', SupplierController.requestedConfirmedOr
 
 
 router.post('/send_estimation', EstimationToCustomerController.sendEstimation);//order ekakata estimation ekak yawana eka
-
-
-
+router.post('/final_billing', EstimationToCustomerController.finalBilling);//confirmed_order_queue eke thiyena confirm estimation ekakata invoice ekak yawana eka
 
 module.exports = router;
