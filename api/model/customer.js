@@ -31,7 +31,8 @@ const Customer_Schema = mongoose.Schema({
     // ban karapu peya gaana
     type: Number,
     default: 0
-  }
+  },
+  invoices_received_queue:[]
 });
 
 module.exports = mongoose.model('Customer', Customer_Schema);

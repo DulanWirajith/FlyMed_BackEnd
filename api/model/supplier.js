@@ -5,9 +5,13 @@ const Supplier_Schema = mongoose.Schema({
     type: String
   },
 
+  normal_order_queue: [],// all notifying order_ids
+
+  customer_requested_new_estimation_queue: [],// estimation ekaka change request kiyala ena ewa
+
   confirmed_order_queue: [],// only have track_ids
 
-  normal_order_queue: [],// all notifying order_ids
+  order_confirmed_with_customer_request_queue: [],// estimation ekaka change request kiyala ena ewa. only have track_ids
 
   processing_order_queue_one: [], // track_ids | status => default false
 
