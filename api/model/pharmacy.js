@@ -1,14 +1,10 @@
 const mongoose = require('mongoose');
 
 const Pharmacy_Schema = mongoose.Schema({
-  supplier_name: {
+  pharmacy_name: {
     type: String
   },
 
-  supplier_section: {
-    type: String,
-    required: true
-  },
 
   normal_order_queue: [], // all notifying order_ids
 
@@ -26,7 +22,7 @@ const Pharmacy_Schema = mongoose.Schema({
 
   // printig_dispatch_note_queue: [],
 
-  confirmed_order_cancelling_requests_by_customer_queue: [] //track_id | reason | estimation_id | is_cancelled | date | time
+  // confirmed_order_cancelling_requests_by_customer_queue: [] //track_id | reason | estimation_id | is_cancelled | date | time
 });
 
 module.exports = mongoose.model('Pharmacy', Pharmacy_Schema);

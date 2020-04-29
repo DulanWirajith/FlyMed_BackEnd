@@ -26,7 +26,7 @@ const Estimation_To_Customer_Schema = mongoose.Schema({
     type: String,
     default:null
   },
-  estimation_cancelled_reason: {
+  estimation_declined_reason: {
     type: String,
     default:null
   },
