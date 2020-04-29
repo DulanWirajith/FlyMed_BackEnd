@@ -150,3 +150,94 @@ exports.finalBilling = (req, res, next) => {
 
 
 };
+
+exports.viewPharmEstimation = (req, res, next) => {
+  var customerEstimation;
+
+  EstimationToCustomer.findOne({
+    _id: req.params.estimation_id
+  }).then(estimation1 => {
+    customerEstimation = estimation1;
+
+    console.log(customerEstimation);
+    res.status(200).json({
+      customerEstimation: customerEstimation
+    });
+  }).catch(err1 => {
+    console.log(err1);
+    res.status(200).json({
+      message: "Incorrect Estimation ID"
+    });
+  });
+
+};
+
+exports.declinePharmEstimation = (req, res, next) => {
+  var customerEstimation;
+  var pharmacyOrder;
+  EstimationToCustomer.findOne({
+    _id: req.body.estimation_id
+  }).then(estimation1 => {
+    customerEstimation = estimation1;
+    console.log(customerEstimation);
+    var estimation_declined_reason = req.body.estimation_declined_reason;
+    var estimation_status = 'declined';
+    EstimationToCustomer.updateOne({
+      _id: req.body.estimation_id
+    }, {
+      $set: {
+        estimation_declined_reason: estimation_declined_reason,
+        estimation_status: estimation_status
+      }
+    }).then(declined_est => {
+      console.log(declined_est);
+      // unanswered_estimation_nums_to_order eken ain karann oona
+      PharmacyOrder.findOne({
+        order_id_by_us: customerEstimation.order_id
+      }).then(order => {
+        pharmacyOrder = order;
+        var unanswered_estimation_nums_to_order = pharmacyOrder.unanswered_estimation_nums_to_order;
+
+        var index = unanswered_estimation_nums_to_order.indexOf(customerEstimation._id);
+        if (index > -1) {
+          unanswered_estimation_nums_to_order.splice(index, 1);
+        }
+
+        PharmacyOrder.updateOne({
+          order_id_by_us: customerEstimation.order_id
+        }, {
+          $set: {
+            unanswered_estimation_nums_to_order: unanswered_estimation_nums_to_order
+          }
+        }).then(updated_order => {
+          console.log(updated_order);
+          res.status(200).json({
+            message: "estimation declined"
+          });
+        }).catch(error => {
+          console.log(error);
+        });
+
+      }).catch(error => {
+        console.log(error);
+      });
+
+    }).catch(error => {
+      console.log(error);
+    });
+    //
+    // console.log(customerEstimation);
+    // res.status(200).json({
+    //   customerEstimation: customerEstimation
+    // });
+  }).catch(err1 => {
+    console.log(err1);
+    res.status(200).json({
+      message: "Incorrect Estimation ID"
+    });
+  });
+};
+
+exports.changeRequirementsNeedNewEstimation = (req, res, next) => {
+
+};

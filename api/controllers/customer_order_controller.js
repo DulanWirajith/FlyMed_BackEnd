@@ -150,7 +150,7 @@ exports.goingToCancelPharmacyOrder = (req, res, next) => {
             });
           } else {
             res.status(200).json({
-              message: 'The order is confirmed..You can only request to supplier for cancel the order. If order canelled you are banned for 4 hours.'
+              message: 'The order is confirmed..You can only request to supplier by calling for cancel the order. If order cancelled you are banned for 4 hours.'
             });
           }
         } else {
@@ -214,62 +214,66 @@ exports.cancelPharmacyOrder = (req, res, next) => {
         if (searched_order.my_track_id != null) {
           // confirmed una order ekak nam (trackid ekak thiyena ekak).
           // call ekak yanna oona supplier ta
-          if (searched_order.already_request_confirm_order_cancelleration == true) {
-            res.status(200).json({
-              message: 'cant send order cancelleration request. You already request order cancelleration.'
-            });
-          } else {
-            Pharmacy.search_supplier({
-              _id: searched_order.order_confirmed_supplier_id
-            }).then(order_confirmed_supplier => {
-              console.log(order_confirmed_supplier);
-              var confirmed_order_cancelling_requests_by_customer_queue = order_confirmed_supplier.confirmed_order_cancelling_requests_by_customer_queue;
-              confirmed_order_cancelling_requests_by_customer_queue.push({
-                track_id: searched_order.my_track_id,
-                reason: req.body.reason,
-                estimation_id: searched_order.confirmed_estimation_id,
-                is_cancelled: false,
-                date: req.body.date,
-                time: req.body.time
-              });
-              Pharmacy.updateOne({
-                _id: order_confirmed_supplier._id
-              }, {
-                $set: {
-                  confirmed_order_cancelling_requests_by_customer_queue: confirmed_order_cancelling_requests_by_customer_queue
-                }
-              }).then(updated_supplier => {
-                PharmacyOrder.updateOne({
-                  _id: searched_order._id
-                }, {
-                  $set: {
-                    already_request_confirm_order_cancelleration: true
-                  }
-                }).then(updated_order => {
-                  console.log(updated_order);
-                  res.status(200).json({
-                    message: 'Your order cancel request sent to supplier. Waif for response from supplier.'
-                  });
-                }).catch(error => {
-                  console.log(error);
-                  res.status(400).json({
-                    message: 'Internal Server Error'
-                  });
-                });
+          res.status(200).json({
+            message: 'The order is confirmed..You can only call to supplier for cancel the order. If order cancelled you are banned for 4 hours.'
+          });
 
-              }).catch(error => {
-                console.log(error);
-                res.status(400).json({
-                  message: 'Internal Server Error'
-                });
-              });
-            }).catch(error => {
-              console.log(error);
-              res.status(400).json({
-                message: 'Internal Server Error'
-              });
-            });
-          }
+          // if (searched_order.already_request_confirm_order_cancelleration == true) {
+          //   res.status(200).json({
+          //     message: 'cant send order cancelleration request. You already request order cancelleration.'
+          //   });
+          // } else {
+          //   Pharmacy.search_supplier({
+          //     _id: searched_order.order_confirmed_supplier_id
+          //   }).then(order_confirmed_supplier => {
+          //     console.log(order_confirmed_supplier);
+          //     var confirmed_order_cancelling_requests_by_customer_queue = order_confirmed_supplier.confirmed_order_cancelling_requests_by_customer_queue;
+          //     confirmed_order_cancelling_requests_by_customer_queue.push({
+          //       track_id: searched_order.my_track_id,
+          //       reason: req.body.reason,
+          //       estimation_id: searched_order.confirmed_estimation_id,
+          //       is_cancelled: false,
+          //       date: req.body.date,
+          //       time: req.body.time
+          //     });
+          //     Pharmacy.updateOne({
+          //       _id: order_confirmed_supplier._id
+          //     }, {
+          //       $set: {
+          //         confirmed_order_cancelling_requests_by_customer_queue: confirmed_order_cancelling_requests_by_customer_queue
+          //       }
+          //     }).then(updated_supplier => {
+          //       PharmacyOrder.updateOne({
+          //         _id: searched_order._id
+          //       }, {
+          //         $set: {
+          //           already_request_confirm_order_cancelleration: true
+          //         }
+          //       }).then(updated_order => {
+          //         console.log(updated_order);
+          //         res.status(200).json({
+          //           message: 'Your order cancel request sent to supplier. Waif for response from supplier.'
+          //         });
+          //       }).catch(error => {
+          //         console.log(error);
+          //         res.status(400).json({
+          //           message: 'Internal Server Error'
+          //         });
+          //       });
+          //
+          //     }).catch(error => {
+          //       console.log(error);
+          //       res.status(400).json({
+          //         message: 'Internal Server Error'
+          //       });
+          //     });
+          //   }).catch(error => {
+          //     console.log(error);
+          //     res.status(400).json({
+          //       message: 'Internal Server Error'
+          //     });
+          //   });
+          // }
 
         } else {
           // unconfirmed order ekak
