@@ -239,5 +239,80 @@ exports.declinePharmEstimation = (req, res, next) => {
 };
 
 exports.changeRequirementsNeedNewEstimation = (req, res, next) => {
+  var requirementsChangedEstimation;
+  var estimationOwnedPharmacy;
+  var newRequiremntsRequestedOrder;
+  EstimationToCustomer.updateOne({
+    _id: req.body.estimation_id
+  }, {
+    $set: {
+      available_items: req.body.available_items,
+      need_new_estimation: true
+    }
+  }).then(updatedRequest => {
+    requirementsChangedEstimation = updatedRequest;
+    console.log(requirementsChangedEstimation);
+    console.log("available_items & need_new_estimation changed");
 
+    Pharmacy.findOne({
+      _id: requirementsChangedEstimation.supplier_id
+    }).then(pharmacy => {
+      estimationOwnedPharmacy = pharmacy;
+      console.log(estimationOwnedPharmacy);
+      console.log(requirementsChangedEstimation._id);
+      var customer_requested_new_estimation_queue = estimationOwnedPharmacy.customer_requested_new_estimation_queue;
+      customer_requested_new_estimation_queue.push(requirementsChangedEstimation._id);
+      Pharmacy.updateOne({
+        _id: requirementsChangedEstimation.supplier_id
+      }, {
+        $set: {
+          customer_requested_new_estimation_queue: customer_requested_new_estimation_queue
+        }
+      }).then(changedSupplier => {
+        console.log("customer_requested_new_estimation_queue updated");
+        console.log(changedSupplier);
+        PharmacyOrder.findOne({
+          order_id_by_us: requirementsChangedEstimation.order_id
+        }).then(myorder => {
+          newRequiremntsRequestedOrder = myorder;
+          console.log(newRequiremntsRequestedOrder);
+          var waiting_another_response_for_estimation = newRequiremntsRequestedOrder.waiting_another_response_for_estimation;
+          waiting_another_response_for_estimation.push(requirementsChangedEstimation._id);
+          var unanswered_estimation_nums_to_order = newRequiremntsRequestedOrder.unanswered_estimation_nums_to_order;
+          var index = unanswered_estimation_nums_to_order.indexOf(requirementsChangedEstimation._id);
+          if (index > -1) {
+            unanswered_estimation_nums_to_order.splice(index, 1);
+          }
+
+          PharmacyOrder.updateOne({
+            order_id_by_us: requirementsChangedEstimation.order_id
+          }, {
+            $set: {
+              unanswered_estimation_nums_to_order: unanswered_estimation_nums_to_order,
+              waiting_another_response_for_estimation: waiting_another_response_for_estimation
+            }
+          }).then(updatedOrder => {
+            console.log(updatedOrder);
+            console.log("unanswered_estimation_nums_to_order & waiting_another_response_for_estimation changed");
+            res.status(200).json({
+              message: "send new estimation required request to pharmacy"
+            });
+
+          }).catch(error => {
+            console.log(error);
+          });
+
+        }).catch(error => {
+          console.log(error);
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+    }).catch(error => {
+      console.log(error);
+    });
+
+  }).catch(error => {
+    console.log(error);
+  });
 };
