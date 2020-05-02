@@ -5,6 +5,14 @@ const Pharmacy_Schema = mongoose.Schema({
     type: String
   },
 
+  notification_to_me: [{
+    title: String,
+    description: String,
+    viewed: {
+      type: Boolean,
+      default: false
+    }
+  }],
 
   normal_order_queue: [], // all notifying order_ids
 

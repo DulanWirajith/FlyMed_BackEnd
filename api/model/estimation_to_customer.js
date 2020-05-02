@@ -85,6 +85,11 @@ const Estimation_To_Customer_Schema = mongoose.Schema({
     type: Boolean,
     required: true,
     default: false
+  },
+  is_nic_requesting:{
+    type: Boolean,
+    required: true,
+    default: false
   }
 
 });

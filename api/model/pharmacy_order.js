@@ -41,7 +41,7 @@ const Pharmacy_Order_Schema = mongoose.Schema({
   },
   prescription_url: {
     type: String,
-    required: true
+    required: true,
   },
   patient_nic_num: {
     type: String,
@@ -118,7 +118,9 @@ const Pharmacy_Order_Schema = mongoose.Schema({
   already_request_confirm_order_cancelleration:{
     type: Boolean,
     default: false
-  }
+  },
+  order_declined_suppliers: [],
+  order_viewed_suppliers:[]
   // order_invoice_id: {
   //   type: String
   // },
