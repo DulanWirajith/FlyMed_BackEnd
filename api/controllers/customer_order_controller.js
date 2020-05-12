@@ -1211,5 +1211,158 @@ exports.viewOrderNotificationBySupplier = (req, res, next) => {
 };
 
 exports.declineOrderNotificationBySupplier = (req, res, next) => {
-  
+  var supplier_id = req.body.supplier_id;
+  var pharmacyOrder;
+  PharmacyOrder.findOne({
+    order_id_by_us: req.body.order_id
+  }).then(cust_order => {
+    pharmacyOrder = cust_order;
+    var order_declined_suppliers = pharmacyOrder.order_declined_suppliers;
+    order_declined_suppliers.push(supplier_id);
+
+    PharmacyOrder.updateOne({
+      order_id_by_us: req.body.order_id
+    }, {
+      $set: {
+        order_declined_suppliers: order_declined_suppliers
+      }
+    }).then(updatedOrder => {
+      Pharmacy.search_supplier({
+        _id: supplier_id
+      }).then(selected_supplier => {
+        console.log(selected_supplier.normal_order_queue);
+        var normal_order_queue = selected_supplier.normal_order_queue;
+
+        var index = normal_order_queue.indexOf(req.body.order_id);
+        if (index > -1) {
+          normal_order_queue.splice(index, 1);
+        }
+        Pharmacy.updateOne({
+          _id: supplier_id
+        }, {
+          $set: {
+            normal_order_queue: normal_order_queue
+          }
+        }).then(asd => {
+          console.log('pharmacy normal_order_queue updated');
+          res.status(200).json({
+            message: 'order declined'
+          });
+        }).catch(error => {
+          console.log(error);
+        });
+      }).catch(error => {
+        console.log(error);
+      });
+
+    }).catch(error => {
+      console.log(error);
+    });
+
+  }).catch(error => {
+    console.log(error);
+  });
 }
+
+/*
+exports.cancelConfirmedPharmOrder = (req, res, next) => {
+  var pharmacyOrder;
+  var orderConfirmedPharmacy;
+  PharmacyOrder.findOne({
+    _id: req.body.order_id
+  }).then(searched_order => {
+    pharmacyOrder = searched_order;
+    if (searched_order.unanswered_estimation_nums_to_order.length < 1) {
+      if (searched_order.waiting_another_response_for_estimation.length < 1) {
+        console.log(searched_order);
+        if (searched_order.my_track_id != null) {
+          // confirmed una order ekak nam (trackid ekak thiyena ekak).
+
+          // res.status(200).json({
+          //   message: 'The order is confirmed..You can only call to supplier for cancel the order. If order cancelled you are banned for 4 hours.'
+          // });
+
+
+          //
+
+
+
+          if (searched_order.already_request_confirm_order_cancelleration == true) {
+            res.status(200).json({
+              message: 'cant send order cancelleration request. You already request order cancelleration.'
+            });
+          } else {
+            Pharmacy.search_supplier({
+              _id: pharmacyOrder.order_confirmed_supplier_id
+            }).then(order_confirmed_supplier => {
+              orderConfirmedPharmacy = order_confirmed_supplier;
+              console.log(orderConfirmedPharmacy);
+
+              var confirmed_order_cancelling_requests_by_customer_queue = order_confirmed_supplier.confirmed_order_cancelling_requests_by_customer_queue;
+              confirmed_order_cancelling_requests_by_customer_queue.push({
+                track_id: searched_order.my_track_id,
+                reason: req.body.reason,
+                estimation_id: searched_order.confirmed_estimation_id,
+                is_cancelled: false,
+                date: req.body.date,
+                time: req.body.time
+              });
+              Pharmacy.updateOne({
+                _id: order_confirmed_supplier._id
+              }, {
+                $set: {
+                  confirmed_order_cancelling_requests_by_customer_queue: confirmed_order_cancelling_requests_by_customer_queue
+                }
+              }).then(updated_supplier => {
+                PharmacyOrder.updateOne({
+                  _id: searched_order._id
+                }, {
+                  $set: {
+                    already_request_confirm_order_cancelleration: true
+                  }
+                }).then(updated_order => {
+                  console.log(updated_order);
+                  res.status(200).json({
+                    message: 'Your order cancel request sent to supplier. Waif for response from supplier.'
+                  });
+                }).catch(error => {
+                  console.log(error);
+                  res.status(400).json({
+                    message: 'Internal Server Error'
+                  });
+                });
+
+              }).catch(error => {
+                console.log(error);
+                res.status(400).json({
+                  message: 'Internal Server Error'
+                });
+              });
+            }).catch(error => {
+              console.log(error);
+              res.status(400).json({
+                message: 'Internal Server Error'
+              });
+            });
+          }
+
+        } else {
+          res.status(200).json({
+            message: 'The order is unconfirmed..Only customer can cancel the order.'
+          });
+        }
+      } else {
+        res.status(200).json({
+          message: 'You are waiting for reply from suppliers..You cant cancel order. please wait...'
+        });
+      }
+    } else {
+      res.status(200).json({
+        message: 'There have unanswered estimations..You cant cancel order. please answer to estimations'
+      });
+    }
+  }).catch(error => {
+    console.log(error);
+  });
+};
+*/

@@ -32,7 +32,16 @@ const Customer_Schema = mongoose.Schema({
     type: Number,
     default: 0
   },
-  invoices_received_queue:[]
+  invoices_received_queue: [],
+  
+  notification_to_me: [{
+    title: String,
+    description: String,
+    viewed: {
+      type: Boolean,
+      default: false
+    }
+  }],
 });
 
 module.exports = mongoose.model('Customer', Customer_Schema);

@@ -9,7 +9,3 @@ exports.register = (req, res, next) => {
     Response.create(res, 500, 'server error', err);
   })
 };
-
-exports.requestedConfirmedOrderCancel=(req,res,next)=>{
-
-};

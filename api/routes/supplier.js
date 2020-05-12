@@ -7,7 +7,6 @@ const CustomerOrderController = require('./../controllers/customer_order_control
 
 
 router.post('/register', SupplierController.register);
-router.post('/cancel_order_by_supplier', SupplierController.requestedConfirmedOrderCancel);
 
 
 // Estimation to Customer
@@ -18,6 +17,7 @@ router.post('/final_billing', EstimationToCustomerController.finalBilling);//con
 // CustomerOrder
 router.get('/view_order_notification/:order_id/:supplier_id', CustomerOrderController.viewOrderNotificationBySupplier);//order ekak balana eka
 router.post('/decline_order_notification', CustomerOrderController.declineOrderNotificationBySupplier);//order ekak decline karana eka
+// router.post('/cancel_confiorder_by_supplier', CustomerOrderController.cancelConfirmedPharmOrder);// confirm una order ekak cancel karana eka
 
 
 
