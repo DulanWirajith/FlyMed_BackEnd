@@ -7,7 +7,43 @@ const mongoose = require('mongoose');
 const socket_io = require('socket.io');
 const io = socket_io();
 const socket_connection = require('./auth/socketprotection');
-
+var ReplSet = require('mongodb-topology-manager').ReplSet;
+ 
+// Create new instance
+var server = new ReplSet('mongod', [{
+  // mongod process options
+  options: {
+    bind_ip: 'localhost', port: 31000, dbpath: './db-1'
+  }
+}, {
+  // mongod process options
+  options: {
+    bind_ip: 'localhost', port: 31001, dbpath: './db-2'
+  }
+}, {
+  // Type of node
+  arbiterOnly: true,
+  // mongod process options
+  options: {
+    bind_ip: 'localhost', port: 31002, dbpath: './db-3'
+  }
+}], {
+  replSet: 'rs'
+});
+ 
+const init = async () => {
+  // Perform discovery
+  var result = await server.discover();
+  // Purge the directory
+  await server.purge();
+  // Start process
+  await server.start();
+  // Stop the process
+  await server.stop();
+}
+ 
+// start the replica set
+init();
 // io.use((socket, next) => {
 //     console.log(socket.handshake.query);
 //     if (socket.handshake.query && socket.handshake.query.token) {
@@ -31,11 +67,13 @@ const supplierRoutes = require('./api/routes/supplier');
 
 const Chat = require('./api/service/ChatService')(io);
 Chat.createConnection();
+const Notification = require('./api/service/NotificationService')(io);
+Notification.createConnection();
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-mongoose.connect('mongodb://localhost:27017/BuDDyDB', { useNewUrlParser: true }, (err) => {
+mongoose.connect('mongodb://localhost:27017/BuDDyDB?replicaSet=rs0', { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
     if (err) {
         console.log('\x1b[31m', 'BuDDy Db connection failed try to reconnect...');
         createDbConnection();

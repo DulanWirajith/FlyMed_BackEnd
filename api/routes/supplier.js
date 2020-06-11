@@ -4,6 +4,7 @@ const router = express.Router();
 const SupplierController = require('./../controllers/supplier_controller');
 const EstimationToCustomerController = require('./../controllers/estimation_to_customer_controller');
 const CustomerOrderController = require('./../controllers/customer_order_controller');
+const PharmacyProductCategory=require('./../controllers/pharmacy_inventory_controller');
 
 
 router.post('/register', SupplierController.register);
@@ -19,6 +20,6 @@ router.get('/view_order_notification/:order_id/:supplier_id', CustomerOrderContr
 router.post('/decline_order_notification', CustomerOrderController.declineOrderNotificationBySupplier);//order ekak decline karana eka
 // router.post('/cancel_confiorder_by_supplier', CustomerOrderController.cancelConfirmedPharmOrder);// confirm una order ekak cancel karana eka
 
-
+router.post('save_pharmacy_product_category',PharmacyProductCategory.addCategory);
 
 module.exports = router;
