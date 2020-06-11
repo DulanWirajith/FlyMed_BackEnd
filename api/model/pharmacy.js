@@ -33,4 +33,5 @@ const Pharmacy_Schema = mongoose.Schema({
   // confirmed_order_cancelling_requests_by_customer_queue: [] //track_id | reason | estimation_id | is_cancelled | date | time
 });
 
+
 module.exports = mongoose.model('Pharmacy', Pharmacy_Schema);
